@@ -1,0 +1,123 @@
+<div class="detail-page">
+  @if (loading()) {
+  <div class="loading">Carregando...</div>
+  } @else if (notFound()) {
+  <div class="not-found">
+    <h2>Oportunidade não encontrada</h2>
+    <p>A oportunidade que você procura não existe ou foi removida.</p>
+    <a routerLink="/opportunities" class="btn-primary">Voltar às oportunidades</a>
+  </div>
+  } @else if (opportunity(); as opp) {
+  <header class="detail-header">
+    <button type="button" class="btn-back" (click)="goBack()" aria-label="Voltar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="19" y1="12" x2="5" y2="12" />
+        <polyline points="12 19 5 12 12 5" />
+      </svg>
+      Voltar
+    </button>
+    <div class="header-actions">
+      <button type="button" class="btn-secondary" (click)="editOpportunity()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+        </svg>
+        Editar
+      </button>
+      <button type="button" class="btn-secondary danger" (click)="deleteOpportunity()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6" />
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+        </svg>
+        Excluir
+      </button>
+    </div>
+  </header>
+
+  <main class="detail-content">
+    <article class="detail-card">
+      <div class="detail-main">
+        <div class="detail-top">
+          <span class="opportunity-type">{{ opp.type }}</span>
+          <h1>{{ opp.title }}</h1>
+          <p class="company">{{ opp.company }}</p>
+        </div>
+
+        <div class="detail-meta">
+          @if (opp.workMode) {
+          <div class="meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            <span>{{ opp.workMode }}</span>
+          </div>
+          }
+          @if (opp.location) {
+          <div class="meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+            <span>{{ opp.location }}</span>
+          </div>
+          }
+          @if (opp.salary) {
+          <div class="meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23" />
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+            </svg>
+            <span>{{ opp.salary }}</span>
+          </div>
+          }
+          <div class="meta-item">
+            <span class="status-badge {{ getStatusClass(opp.status) }}">{{ opp.status }}</span>
+          </div>
+        </div>
+
+        @if (opp.link) {
+        <a [href]="opp.link" target="_blank" rel="noopener noreferrer" class="detail-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            <polyline points="15 3 21 3 21 9" />
+            <line x1="10" y1="14" x2="21" y2="3" />
+          </svg>
+          Ver vaga original
+        </a>
+        }
+      </div>
+
+      <aside class="detail-sidebar">
+        <div class="sidebar-section">
+          <h3>Tecnologias</h3>
+          <div class="technologies">
+            @for (tech of opp.technologies; track tech) {
+            <span class="technology">{{ tech }}</span>
+            } @empty {
+            <span class="empty-tech">Não informadas</span>
+            }
+          </div>
+        </div>
+
+        @if (opp.description) {
+        <div class="sidebar-section">
+          <h3>Descrição</h3>
+          <p class="description">{{ opp.description }}</p>
+        </div>
+        }
+
+        <div class="sidebar-section">
+          <h3>Datas</h3>
+          <dl class="dates">
+            <dt>Criada em</dt>
+            <dd>{{ formatDate(opp.createdAt) }}</dd>
+            <dt>Atualizada em</dt>
+            <dd>{{ formatDate(opp.updatedAt) }}</dd>
+          </dl>
+        </div>
+      </aside>
+    </article>
+  </main>
+  }
+</div>

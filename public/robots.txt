@@ -1,0 +1,4 @@
+# JobInbox - Aplicação privada local
+# Não indexar nenhuma página
+User-agent: *
+Disallow: /

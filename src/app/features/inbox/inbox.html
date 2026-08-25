@@ -1,0 +1,327 @@
+<section class="inbox">
+    <header class="page-header">
+        <div>
+            <h1>Inbox</h1>
+            <p>
+                Centralize e organize as mensagens relacionadas a
+                oportunidades.
+            </p>
+        </div>
+
+        <div class="inbox-stats">
+            <span>{{ pendingCount() }} não analisadas</span>
+            <span>{{ analyzedCount() }} analisadas</span>
+        </div>
+    </header>
+
+    <!-- FILTROS -->
+    <div class="inbox-toolbar">
+        <div class="inbox-count">
+            <strong>{{ filteredMessages().length }}</strong>
+            <span> mensagens exibidas</span>
+        </div>
+
+        <div class="inbox-filters">
+            <div class="filter-group">
+                <label for="statusFilter">Status</label>
+
+                <select id="statusFilter" [value]="statusFilter()"
+                    (change)="statusFilter.set($any($event.target).value)">
+                    <option value="all">Todas</option>
+                    <option value="pending">Não analisadas</option>
+                    <option value="analyzed">Analisadas</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="typeFilter">Tipo</label>
+
+                <select id="typeFilter" [value]="typeFilter()" (change)="typeFilter.set($any($event.target).value)">
+                    <option value="Todos">Todos</option>
+                    <option value="Vaga">Vagas</option>
+                    <option value="Curso">Cursos</option>
+                    <option value="Evento">Eventos</option>
+                    <option value="Outro">Outros</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- LISTA DE MENSAGENS -->
+    <div class="messages-list">
+        @for (message of filteredMessages(); track message.id) {
+        <article class="message-card" [class.unread]="!message.analyzed">
+            <div class="message-icon" aria-hidden="true">
+                ✉
+            </div>
+
+            <div class="message-content">
+                <div class="message-header">
+                    <div>
+                        <span class="message-type">
+                            {{ message.type }}
+                        </span>
+
+                        <h2>{{ message.subject }}</h2>
+
+                        <p class="sender">
+                            {{ message.sender }}
+                        </p>
+                    </div>
+
+                    @if (!message.analyzed) {
+                    <span class="status pending">
+                        Não analisada
+                    </span>
+                    } @else {
+                    <span class="status analyzed">
+                        Analisada
+                    </span>
+                    }
+                </div>
+
+                <p class="message-preview">
+                    {{ message.content }}
+                </p>
+
+                <div class="message-footer">
+                    <time [attr.datetime]="message.createdAt">
+                        {{ message.createdAt | date:'dd/MM/yyyy HH:mm' }}
+                    </time>
+
+                    <div class="message-actions">
+                        @if (!message.analyzed) {
+                        <button type="button" class="btn btn-primary btn-sm" (click)="analyzeMessage(message.id, $event)">
+                            Analisar oportunidade
+                        </button>
+
+                        <button type="button" class="btn btn-secondary btn-sm" (click)="markAsAnalyzed(message.id, $event)">
+                            Marcar como analisada
+                        </button>
+                        }
+
+                        <button type="button" class="btn-icon danger" (click)="deleteMessage(message.id, $event)"
+                            aria-label="Excluir mensagem">
+                            ×
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </article>
+        } @empty {
+        <div class="empty-state">
+            <div class="empty-icon">
+                ✉
+            </div>
+
+            <h3>Seu Inbox está vazio</h3>
+
+            <p>
+                Quando você receber mensagens sobre vagas,
+                cursos ou eventos, elas aparecerão aqui.
+            </p>
+        </div>
+        }
+    </div>
+
+    <!-- MODAL DE ANÁLISE -->
+    @if (selectedMessageId() && extractedOpportunity()) {
+    <div class="modal-backdrop" (click)="closeAnalysis()" role="dialog" aria-modal="true"
+        aria-labelledby="analysis-title">
+        <div class="modal" (click)="$event.stopPropagation()">
+            <header class="modal-header">
+                <div>
+                    <span class="modal-label">
+                        Análise automática
+                    </span>
+
+                    <h2 id="analysis-title">
+                        Oportunidade identificada
+                    </h2>
+                </div>
+
+                <button type="button" class="modal-close" (click)="closeAnalysis()" aria-label="Fechar">
+                    ×
+                </button>
+            </header>
+
+            <div class="modal-body">
+                <!-- TÍTULO -->
+                <div class="form-field">
+                    <label for="opportunityTitle">Título:</label>
+
+                    <input id="opportunityTitle" type="text" [value]="extractedOpportunity()!.title"
+                        (input)="updateOpportunityField('title', $any($event.target).value)" />
+                </div>
+
+                <!-- EMPRESA -->
+                <div class="form-field">
+                    <label for="opportunityCompany">Empresa:</label>
+
+                    <input id="opportunityCompany" type="text" [value]="extractedOpportunity()!.company"
+                        (input)="updateOpportunityField('company', $any($event.target).value)" />
+                </div>
+
+                <!-- TIPO / MODALIDADE -->
+                <div class="form-grid">
+
+                    <div class="form-field">
+                        <label for="opportunityType">Tipo:</label>
+
+                        <select id="opportunityType" [value]="extractedOpportunity()!.type"
+                            (change)="updateOpportunityField('type', $any($event.target).value)">
+                            <option value="CLT">CLT</option>
+                            <option value="PJ">PJ</option>
+                            <option value="Estágio">Estágio</option>
+                            <option value="Trainee">Trainee</option>
+                            <option value="Outro">Outro</option>
+                            <option value="Não informado">Não informado</option>
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="opportunityWorkMode">Modalidade:</label>
+
+                        <select id="opportunityWorkMode" [value]="extractedOpportunity()!.workMode"
+                            (change)="updateOpportunityField('workMode', $any($event.target).value)">
+                            <option value="Remota">Remota</option>
+                            <option value="Híbrida">Híbrida</option>
+                            <option value="Presencial">Presencial</option>
+                            <option value="Não informado">Não informado</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <!-- RELEVÂNCIA -->
+                <div class="form-field relevance-field">
+                    <label>Relevância da oportunidade:</label>
+
+                    <div class="relevance-score">
+                        <strong>
+                            {{ extractedOpportunity()!.relevanceScore }}%
+                        </strong>
+
+                        <span>
+                            @if (extractedOpportunity()!.relevanceScore >= 70) {
+                            Alta
+                            } @else if (extractedOpportunity()!.relevanceScore >= 40) {
+                            Média
+                            } @else {
+                            Baixa
+                            }
+                        </span>
+                    </div>
+                </div>
+
+                <!-- TECNOLOGIAS -->
+                <div class="form-field technologies-field">
+                    <label>Tecnologias identificadas:</label>
+
+                    <div class="technology-list">
+                        @for (
+                        technology of extractedOpportunity()!.technologies;
+                        track technology
+                        ) {
+                        <span class="technology">
+                            {{ technology }}
+
+                            <button type="button" class="technology-remove" (click)="removeTechnology(technology)"
+                                [attr.aria-label]="'Remover ' + technology">
+                                ×
+                            </button>
+                        </span>
+                        } @empty {
+                        <span class="no-data">
+                            Nenhuma tecnologia identificada
+                        </span>
+                        }
+                    </div>
+                    <div class="technology-add">
+                        <input #technologyInput type="text" placeholder="Adicionar tecnologia"
+                            (keyup.enter)="addTechnology($event)" />
+
+                        <button type="button" class="btn-secondary" (click)="addTechnologyFromInput(technologyInput)">
+                            Adicionar
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- DESCRIÇÃO -->
+                <!-- DESCRIÇÃO -->
+                <div class="description-box">
+                    <div class="description-header">
+                        <label for="opportunityDescription" class="field-label">
+                            Descrição:
+                        </label>
+                    </div>
+
+                    <div class="description-content">
+                        <textarea id="opportunityDescription" rows="6" [value]="extractedOpportunity()!.description"
+                            (input)="updateOpportunityField(
+                'description',
+                $any($event.target).value
+            )"></textarea>
+                    </div>
+                </div>
+
+                <!-- SALÁRIO / LOCALIZAÇÃO -->
+                <div class="form-grid">
+
+                    <div class="form-field">
+                        <label for="opportunitySalary">
+                            Salário:
+                        </label>
+
+                        <input id="opportunitySalary" type="text" placeholder="Não informado"
+                            [value]="extractedOpportunity()!.salary" (input)="updateOpportunityField(
+                'salary',
+                $any($event.target).value
+            )" />
+                    </div>
+
+                    <div class="form-field">
+                        <label for="opportunityLocation">
+                            Localização:
+                        </label>
+
+                        <input id="opportunityLocation" type="text" placeholder="Não informado"
+                            [value]="extractedOpportunity()!.location" (input)="updateOpportunityField(
+                'location',
+                $any($event.target).value
+            )" />
+                    </div>
+
+                </div>
+
+                <!-- LINK -->
+                <div class="form-field">
+                    <label for="opportunityLink">
+                        Link da oportunidade:
+                    </label>
+
+                    <input id="opportunityLink" type="url" placeholder="https://..."
+                        [value]="extractedOpportunity()!.link" (input)="updateOpportunityField(
+            'link',
+            $any($event.target).value
+        )" />
+                </div>
+
+            </div>
+
+            <!-- AÇÕES -->
+            <footer class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeAnalysis()">
+                    Cancelar
+                </button>
+
+                <button type="button" class="btn btn-primary" (click)="createOpportunity()">
+                    Adicionar às oportunidades
+                </button>
+            </footer>
+
+        </div>
+    </div>
+    }
+</section>

@@ -1,0 +1,97 @@
+@if (isOpen()) {
+<div class="modal-backdrop" (click)="onBackdropClick($event)" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-container">
+    <header class="modal-header">
+      <h2 id="modal-title">{{ mode() === 'create' ? 'Nova oportunidade' : 'Editar oportunidade' }}</h2>
+      <button type="button" class="modal-close" (click)="close()" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </header>
+
+    <form class="modal-form" (ngSubmit)="onSubmit()">
+      @if (errorMessage()) {
+      <div class="form-error">{{ errorMessage() }}</div>
+      }
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="title">Título da vaga *</label>
+          <input type="text" id="title" name="title" [(ngModel)]="formData().title" placeholder="Ex: Desenvolvedora Front-End Pleno" required />
+        </div>
+
+        <div class="form-field">
+          <label for="company">Empresa *</label>
+          <input type="text" id="company" name="company" [(ngModel)]="formData().company" placeholder="Ex: Tech Solutions" required />
+        </div>
+
+        <div class="form-field full-width">
+          <label for="technologies">Tecnologias</label>
+          <input type="text" id="technologies" name="technologies" [(ngModel)]="formData().technologies" placeholder="Separe por vírgula: Angular, TypeScript, RxJS" />
+        </div>
+
+        <div class="form-field">
+          <label for="type">Tipo</label>
+          <select id="type" name="type" [(ngModel)]="formData().type">
+            @for (type of types; track type) {
+            <option [value]="type">{{ type }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="status">Status</label>
+          <select id="status" name="status" [(ngModel)]="formData().status">
+            @for (status of statuses; track status) {
+            <option [value]="status">{{ status }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="workMode">Modalidade</label>
+          <select id="workMode" name="workMode" [(ngModel)]="formData().workMode">
+            @for (workMode of workModes; track workMode) {
+            <option [value]="workMode">{{ workMode }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-field full-width">
+          <label for="location">Localização</label>
+          <input type="text" id="location" name="location" [(ngModel)]="formData().location" placeholder="Ex: São Paulo - SP, Remoto" />
+        </div>
+
+        <div class="form-field full-width">
+          <label for="salary">Faixa salarial</label>
+          <input type="text" id="salary" name="salary" [(ngModel)]="formData().salary" placeholder="Ex: R$ 8.000 - R$ 12.000" />
+        </div>
+
+        <div class="form-field full-width">
+          <label for="link">Link da vaga</label>
+          <input type="url" id="link" name="link" [(ngModel)]="formData().link" placeholder="https://..." />
+        </div>
+
+        <div class="form-field full-width">
+          <label for="description">Descrição</label>
+          <textarea id="description" name="description" [(ngModel)]="formData().description" rows="4" placeholder="Principais responsabilidades, requisitos, benefícios..."></textarea>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" (click)="close()" [disabled]="isSubmitting()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting()">
+          @if (isSubmitting()) {
+          <span class="spinner"></span>
+          Salvando...
+          } @else {
+          {{ mode() === 'create' ? 'Criar' : 'Salvar alterações' }}
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+}
