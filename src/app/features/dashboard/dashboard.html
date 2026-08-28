@@ -5,7 +5,9 @@
       <h1>Olá, Manoela 👋</h1>
       <p>Acompanhe suas oportunidades e organize sua busca profissional.</p>
     </div>
-    <button type="button" class="btn btn-primary" (click)="openCreateModal()">+ Nova oportunidade</button>
+    <button type="button" class="btn btn-primary" (click)="openCreateModal()">
+      + Nova oportunidade
+    </button>
   </header>
 
   <!-- RESUMO -->
@@ -54,88 +56,122 @@
   <!-- GRID PRINCIPAL -->
   <section class="dashboard-grid">
     <!-- STATUS -->
-    <article class="dashboard-card">
+    <article class="dashboard-card status-card">
       <div class="card-header">
         <div>
           <span class="card-label">Acompanhamento</span>
           <h2>Oportunidades por status</h2>
         </div>
+
+        <strong class="status-total">
+          {{ totalOpportunities() }}
+        </strong>
       </div>
+
       <div class="status-list">
         @for (item of statusSummary(); track item.status) {
-        <div class="status-row">
-          <div class="status-info">
-            <span class="status-dot status-{{ getStatusClass(item.status) }}"></span>
-            <span>{{ item.status }}</span>
+          <div class="status-row">
+            <div class="status-row-header">
+              <div class="status-info">
+                <span class="status-dot status-{{ getStatusClass(item.status) }}"></span>
+                <span>{{ item.status }}</span>
+              </div>
+
+              <strong>{{ item.count }}</strong>
+            </div>
+
+            <div class="status-progress" aria-hidden="true">
+              <span
+                [style.width.%]="
+                  totalOpportunities() ? (item.count / totalOpportunities()) * 100 : 0
+                "
+              ></span>
+            </div>
           </div>
-          <strong>{{ item.count }}</strong>
-        </div>
         }
       </div>
     </article>
 
     <!-- TECNOLOGIAS -->
-    <article class="dashboard-card">
+    <article class="dashboard-card technical-card">
       <div class="card-header">
         <div>
           <span class="card-label">Perfil técnico</span>
           <h2>Tecnologias mais encontradas</h2>
         </div>
       </div>
+
       @if (technologySummary().length) {
-      <div class="technology-list">
-        @for (item of technologySummary(); track item.technology) {
-        <div class="technology-row">
-          <span>{{ item.technology }}</span>
-          <div class="technology-bar">
-            <span [style.width.%]="(item.count / technologySummary()[0].count) * 100"></span>
-          </div>
-          <strong>{{ item.count }}</strong>
-        </div>
-        }
-      </div>
-      } @else {
-      <p class="empty-small">Ainda não há tecnologias cadastradas.</p>
-      }
-    </article>
-  </section>
+        <div class="technology-ranking">
+          @for (item of technologySummary(); track item.technology; let i = $index) {
+            <div class="technology-ranking-item">
+              <span class="technology-rank">
+                {{ i + 1 }}
+              </span>
 
-  <!-- ÚLTIMAS OPORTUNIDADES -->
-  <section class="recent">
-    <div class="section-header">
-      <div>
-        <span class="card-label">Atualizações</span>
-        <h2>Últimas oportunidades</h2>
-      </div>
-      <button type="button" class="btn btn-secondary" (click)="navigateToOpportunities()">Ver todas</button>
-    </div>
+              <span class="technology-name">
+                {{ item.technology }}
+              </span>
 
-    @for (opportunity of recentOpportunities(); track opportunity.id) {
-    <article class="opportunity-card" (click)="navigateToDetail(opportunity.id)" tabindex="0" role="button">
-      <div class="opportunity-main">
-        <div class="opportunity-title">
-          <h3>{{ opportunity.title }}</h3>
-          <span class="company">{{ opportunity.company }}</span>
-        </div>
-        @if (opportunity.technologies.length) {
-        <div class="technology-tags">
-          @for (technology of opportunity.technologies; track technology) {
-          <span>{{ technology }}</span>
+              <strong class="technology-count">
+                {{ item.count }}
+              </strong>
+            </div>
           }
         </div>
-        }
-      </div>
-      <span class="status-badge {{ getStatusClass(opportunity.status) }}">{{ opportunity.status }}</span>
+      } @else {
+        <p class="empty-small">Ainda não há tecnologias cadastradas.</p>
+      }
     </article>
-    } @empty {
-    <div class="empty-state">
-      <div class="empty-icon">💼</div>
-      <h3>Nenhuma oportunidade cadastrada</h3>
-      <p>Adicione sua primeira oportunidade para começar a acompanhar sua busca.</p>
-      <button type="button" class="btn btn-primary" (click)="openCreateModal()">+ Nova oportunidade</button>
-    </div>
-    }
 
-    <app-opportunity-modal />
+    <!-- ÚLTIMAS OPORTUNIDADES -->
+    <section class="recent">
+      <div class="section-header">
+        <div>
+          <span class="card-label">Atualizações</span>
+          <h2>Últimas oportunidades</h2>
+        </div>
+        <button type="button" class="btn btn-secondary" (click)="navigateToOpportunities()">
+          Ver todas
+        </button>
+      </div>
+
+      @for (opportunity of recentOpportunities(); track opportunity.id) {
+        <article
+          class="opportunity-card"
+          (click)="navigateToDetail(opportunity.id)"
+          tabindex="0"
+          role="button"
+        >
+          <div class="opportunity-main">
+            <div class="opportunity-title">
+              <h3>{{ opportunity.title }}</h3>
+              <span class="company">{{ opportunity.company }}</span>
+            </div>
+            @if (opportunity.technologies.length) {
+              <div class="technology-tags">
+                @for (technology of opportunity.technologies; track technology) {
+                  <span>{{ technology }}</span>
+                }
+              </div>
+            }
+          </div>
+          <span class="status-badge {{ getStatusClass(opportunity.status) }}">{{
+            opportunity.status
+          }}</span>
+        </article>
+      } @empty {
+        <div class="empty-state">
+          <div class="empty-icon">💼</div>
+          <h3>Nenhuma oportunidade cadastrada</h3>
+          <p>Adicione sua primeira oportunidade para começar a acompanhar sua busca.</p>
+          <button type="button" class="btn btn-primary" (click)="openCreateModal()">
+            + Nova oportunidade
+          </button>
+        </div>
+      }
+
+      <app-opportunity-modal />
+    </section>
   </section>
 </section>

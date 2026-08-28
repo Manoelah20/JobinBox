@@ -1,0 +1,35 @@
+{
+  "name": "JobInbox",
+  "short_name": "JobInbox",
+  "description": "Gerencie suas oportunidades de emprego e organize sua busca profissional",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-512.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    }
+  ],
+  "categories": ["productivity", "business"],
+  "shortcuts": [
+    {
+      "name": "Nova Oportunidade",
+      "short_name": "Nova",
+      "description": "Criar nova oportunidade",
+      "url": "/opportunities",
+      "icons": [{ "src": "icon-512.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Inbox",
+      "short_name": "Inbox",
+      "description": "Ver mensagens não analisadas",
+      "url": "/inbox",
+      "icons": [{ "src": "icon-512.svg", "sizes": "any" }]
+    }
+  ]
+}

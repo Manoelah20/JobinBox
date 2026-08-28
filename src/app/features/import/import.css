@@ -10,14 +10,19 @@
 }
 
 .upload-area {
-  border: 2px dashed var(--border);
-  border-radius: var(--radius-lg);
-  padding: 48px 24px;
+  border: 1px dashed var(--brand-border);
+  border-radius: var(--radius-xl);
+  padding: 56px 32px;
   text-align: center;
-  background: var(--bg-surface-hover);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+
   transition:
     border-color var(--transition-fast),
-    background-color var(--transition-fast);
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+
   cursor: pointer;
 }
 
@@ -25,13 +30,24 @@
 .upload-area.dragging {
   border-color: var(--brand);
   background: var(--brand-light);
+  box-shadow: var(--shadow-md);
+}
+
+.upload-area.dragging {
+  transform: translateY(-1px);
 }
 
 .upload-icon {
-  width: 48px;
-  height: 48px;
-  color: var(--text-discreet);
-  margin-bottom: 16px;
+  width: 52px;
+  height: 52px;
+
+  padding: 12px;
+  margin-bottom: 18px;
+
+  border-radius: var(--radius-full);
+
+  background: var(--brand-light);
+  color: var(--brand);
 }
 
 .upload-area.dragging .upload-icon {
@@ -41,6 +57,8 @@
 .upload-content h3 {
   margin: 0 0 8px;
   font-size: 20px;
+  color: var(--text-primary);
+  font-weight: 700;
 }
 
 .upload-content p {

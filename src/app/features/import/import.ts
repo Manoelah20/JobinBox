@@ -1,7 +1,8 @@
 import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { OpportunityService, Opportunity } from '../../core/services/opportunity.service';
+import type { Opportunity, OpportunityType } from '../../core/services/opportunity.service';
+import { OpportunityService } from '../../core/services/opportunity.service';
 
 @Component({
   selector: 'app-import',
@@ -15,7 +16,11 @@ export class Import {
   protected readonly isDragging = signal(false);
   protected readonly selectedFile = signal<File | null>(null);
   protected readonly previewData = signal<Opportunity[] | null>(null);
-  protected readonly importResult = signal<{ added: number; updated: number; errors: string[] } | null>(null);
+  protected readonly importResult = signal<{
+    added: number;
+    updated: number;
+    errors: string[];
+  } | null>(null);
   protected readonly isImporting = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
 
@@ -86,7 +91,9 @@ export class Import {
 
         this.previewData.set(data as Opportunity[]);
       } catch (err) {
-        this.errorMessage.set(`Erro ao ler arquivo: ${err instanceof Error ? err.message : 'Formato inválido'}`);
+        this.errorMessage.set(
+          `Erro ao ler arquivo: ${err instanceof Error ? err.message : 'Formato inválido'}`,
+        );
       }
     };
     reader.onerror = () => {
@@ -136,6 +143,21 @@ export class Import {
     return result.map((v) => v.replace(/^"|"$/g, ''));
   }
 
+  private readonly VALID_OPPORTUNITY_TYPES: OpportunityType[] = [
+    'CLT',
+    'PJ',
+    'Estágio',
+    'Trainee',
+    'Curso',
+    'Evento',
+    'Outro',
+  ];
+
+  private parseOpportunityType(value: string): OpportunityType {
+    const match = this.VALID_OPPORTUNITY_TYPES.find((t) => t.toLowerCase() === value.toLowerCase());
+    return match ?? 'CLT';
+  }
+
   private mapCsvRow(row: Record<string, string>): Partial<Opportunity> {
     const techStr = row['technologies'] || row['tecnologias'] || '';
     const technologies = techStr
@@ -147,7 +169,7 @@ export class Import {
       title: row['title'] || row['título'] || row['vaga'] || '',
       company: row['company'] || row['empresa'] || '',
       technologies,
-      type: row['type'] || row['tipo'] || 'CLT',
+      type: this.parseOpportunityType(row['type'] || row['tipo'] || 'CLT'),
       status: row['status'] || 'Nova',
       workMode: row['workMode'] || row['modalidade'] || row['work_mode'],
       description: row['description'] || row['descrição'] || row['descricao'],
@@ -168,7 +190,9 @@ export class Import {
       this.previewData.set(null);
       this.selectedFile.set(null);
     } catch (err) {
-      this.errorMessage.set(`Erro ao importar: ${err instanceof Error ? err.message : 'Erro desconhecido'}`);
+      this.errorMessage.set(
+        `Erro ao importar: ${err instanceof Error ? err.message : 'Erro desconhecido'}`,
+      );
     } finally {
       this.isImporting.set(false);
     }

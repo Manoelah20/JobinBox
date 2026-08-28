@@ -45,7 +45,10 @@ describe('OpportunityService', () => {
     const opportunities = service.opportunities();
     const firstOpp = opportunities[0];
 
-    const updated = service.update(firstOpp.id, { title: 'Título Atualizado', status: 'Entrevista' });
+    const updated = service.update(firstOpp.id, {
+      title: 'Título Atualizado',
+      status: 'Entrevista',
+    });
 
     expect(updated).not.toBeNull();
     expect(updated!.title).toBe('Título Atualizado');
@@ -174,8 +177,12 @@ Outra Vaga,Outra Empresa,"Angular; RxJS",PJ,Interessante,Híbrida`;
 
   it('should have correct computed counts', () => {
     expect(service.totalCount()).toBe(service.opportunities().length);
-    expect(service.newCount()).toBe(service.opportunities().filter((o) => o.status === 'Nova').length);
-    expect(service.inProgressCount()).toBe(service.opportunities().filter((o) => o.status === 'Em andamento').length);
+    expect(service.newCount()).toBe(
+      service.opportunities().filter((o) => o.status === 'Nova').length,
+    );
+    expect(service.inProgressCount()).toBe(
+      service.opportunities().filter((o) => o.status === 'Em andamento').length,
+    );
   });
 
   it('should persist to localStorage', () => {

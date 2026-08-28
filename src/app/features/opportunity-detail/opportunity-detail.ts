@@ -1,7 +1,9 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import type { OnInit } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { OpportunityService, Opportunity } from '../../core/services/opportunity.service';
+import type { Opportunity } from '../../core/services/opportunity.service';
+import { OpportunityService } from '../../core/services/opportunity.service';
 
 @Component({
   selector: 'app-opportunity-detail',

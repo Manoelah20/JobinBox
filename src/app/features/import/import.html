@@ -7,109 +7,151 @@
   </header>
 
   @if (!previewData() && !importResult()) {
-  <div class="upload-area" [class.dragging]="isDragging()" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
-    <input type="file" #fileInput id="fileInput" accept=".json,.csv" (change)="onFileSelect($event)" hidden />
-    <div class="upload-content">
-      <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-        <polyline points="17 8 12 3 7 8" />
-        <line x1="12" y1="3" x2="12" y2="15" />
-      </svg>
-      <h3>Arraste e solte ou clique para selecionar</h3>
-      <p>Arquivos JSON ou CSV (máx. 5MB)</p>
-      <button type="button" class="btn btn-primary" (click)="fileInput.click()">Selecionar arquivo</button>
-    </div>
-  </div>
-  }
-
-  @if (errorMessage()) {
-  <div class="alert alert-error" role="alert">
-    {{ errorMessage() }}
-    <button type="button" class="alert-close" (click)="errorMessage.set(null)" aria-label="Fechar">&times;</button>
-  </div>
-  }
-
-  @if (previewData()) {
-  <div class="preview-section">
-    <div class="preview-header">
-      <h2>Pré-visualização ({{ getPreviewCount() }} oportunidades)</h2>
-      <div class="preview-actions">
-        <button type="button" class="btn btn-secondary" (click)="cancelImport()">Cancelar</button>
-        <button type="button" class="btn btn-primary" (click)="confirmImport()" [disabled]="isImporting()">
-          @if (isImporting()) {
-          <span class="spinner"></span>
-          Importando...
-          } @else {
-          Confirmar importação
-          }
+    <div
+      class="upload-area"
+      [class.dragging]="isDragging()"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+    >
+      <input
+        type="file"
+        #fileInput
+        id="fileInput"
+        accept=".json,.csv"
+        (change)="onFileSelect($event)"
+        hidden
+      />
+      <div class="upload-content">
+        <svg
+          class="upload-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        >
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="17 8 12 3 7 8" />
+          <line x1="12" y1="3" x2="12" y2="15" />
+        </svg>
+        <h3>Arraste e solte ou clique para selecionar</h3>
+        <p>Arquivos JSON ou CSV (máx. 5MB)</p>
+        <button type="button" class="btn btn-primary" (click)="fileInput.click()">
+          Selecionar arquivo
         </button>
       </div>
     </div>
+  }
 
-    <div class="preview-table-container">
-      <table class="preview-table">
-        <thead>
-          <tr>
-            <th>Título</th>
-            <th>Empresa</th>
-            <th>Tecnologias</th>
-            <th>Tipo</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (item of previewData(); track item.title) {
-          <tr>
-            <td>{{ item.title }}</td>
-            <td>{{ item.company }}</td>
-            <td>{{ formatTechnologies(item.technologies) }}</td>
-            <td><span class="badge">{{ item.type }}</span></td>
-            <td><span class="badge status-{{ (item.status || '').toLowerCase().replace(' ', '-') }}">{{ item.status || 'Nova' }}</span></td>
-          </tr>
-          }
-        </tbody>
-      </table>
+  @if (errorMessage()) {
+    <div class="alert alert-error" role="alert">
+      {{ errorMessage() }}
+      <button
+        type="button"
+        class="alert-close"
+        (click)="errorMessage.set(null)"
+        aria-label="Fechar"
+      >
+        &times;
+      </button>
     </div>
-  </div>
+  }
+
+  @if (previewData()) {
+    <div class="preview-section">
+      <div class="preview-header">
+        <h2>Pré-visualização ({{ getPreviewCount() }} oportunidades)</h2>
+        <div class="preview-actions">
+          <button type="button" class="btn btn-secondary" (click)="cancelImport()">Cancelar</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="confirmImport()"
+            [disabled]="isImporting()"
+          >
+            @if (isImporting()) {
+              <span class="spinner"></span>
+              Importando...
+            } @else {
+              Confirmar importação
+            }
+          </button>
+        </div>
+      </div>
+
+      <div class="preview-table-container table-responsive table-cards">
+        <table class="preview-table">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Empresa</th>
+              <th>Tecnologias</th>
+              <th>Tipo</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of previewData(); track item.title) {
+              <tr>
+                <td data-label="Título">{{ item.title }}</td>
+                <td data-label="Empresa">{{ item.company }}</td>
+                <td data-label="Tecnologias">{{ formatTechnologies(item.technologies) }}</td>
+                <td data-label="Tipo">
+                  <span class="badge">{{ item.type }}</span>
+                </td>
+                <td data-label="Status">
+                  <span
+                    class="badge status-{{ (item.status || '').toLowerCase().replace(' ', '-') }}"
+                    >{{ item.status || 'Nova' }}</span
+                  >
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
   }
 
   @if (importResult()) {
-  <div class="result-section">
-    <div class="result-header">
-      <h2>Importação concluída</h2>
-    </div>
-    <div class="result-stats">
-      <div class="stat">
-        <span class="stat-value">{{ importResult()!.added }}</span>
-        <span class="stat-label">Adicionadas</span>
+    <div class="result-section">
+      <div class="result-header">
+        <h2>Importação concluída</h2>
       </div>
-      <div class="stat">
-        <span class="stat-value">{{ importResult()!.updated }}</span>
-        <span class="stat-label">Atualizadas</span>
-      </div>
-      @if (importResult()!.errors.length > 0) {
-      <div class="stat">
-        <span class="stat-value error">{{ importResult()!.errors.length }}</span>
-        <span class="stat-label">Erros</span>
-      </div>
-      }
-    </div>
-
-    @if (importResult()!.errors.length > 0) {
-    <details class="errors-details">
-      <summary>Ver erros ({{ importResult()!.errors.length }})</summary>
-      <ul class="errors-list">
-        @for (error of importResult()!.errors; track error) {
-        <li>{{ error }}</li>
+      <div class="result-stats">
+        <div class="stat">
+          <span class="stat-value">{{ importResult()!.added }}</span>
+          <span class="stat-label">Adicionadas</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">{{ importResult()!.updated }}</span>
+          <span class="stat-label">Atualizadas</span>
+        </div>
+        @if (importResult()!.errors.length > 0) {
+          <div class="stat">
+            <span class="stat-value error">{{ importResult()!.errors.length }}</span>
+            <span class="stat-label">Erros</span>
+          </div>
         }
-      </ul>
-    </details>
-    }
+      </div>
 
-    <div class="result-actions">
-      <button type="button" class="btn btn-primary" (click)="importResult.set(null)">Nova importação</button>
-      <a routerLink="/opportunities" class="btn btn-secondary">Ver oportunidades</a>
+      @if (importResult()!.errors.length > 0) {
+        <details class="errors-details">
+          <summary>Ver erros ({{ importResult()!.errors.length }})</summary>
+          <ul class="errors-list">
+            @for (error of importResult()!.errors; track error) {
+              <li>{{ error }}</li>
+            }
+          </ul>
+        </details>
+      }
+
+      <div class="result-actions">
+        <button type="button" class="btn btn-primary" (click)="importResult.set(null)">
+          Nova importação
+        </button>
+        <a routerLink="/opportunities" class="btn btn-secondary">Ver oportunidades</a>
+      </div>
     </div>
-  </div>
   }
 </section>

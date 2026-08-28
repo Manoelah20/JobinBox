@@ -128,16 +128,55 @@
   color: var(--text-primary);
 }
 
+/* =========================================
+   ACOMPANHAMENTO
+   ========================================= */
+
+.status-card {
+  min-height: 300px;
+}
+
+.status-card .card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.status-total {
+  display: grid;
+  place-items: center;
+
+  min-width: 42px;
+  height: 42px;
+  padding: 0 10px;
+
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-md);
+
+  background: var(--brand-light);
+  color: var(--brand);
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
 .status-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 17px;
 }
 
 .status-row {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.status-row-header {
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 16px;
 }
 
@@ -145,73 +184,164 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: var(--text-muted);
+
+  color: var(--text-secondary);
   font-size: 14px;
+  font-weight: 500;
+}
+
+.status-row-header strong {
+  min-width: 24px;
+
+  color: var(--text-primary);
+
+  font-size: 16px;
+  font-weight: 700;
+  text-align: right;
 }
 
 .status-dot {
   width: 9px;
   height: 9px;
+
+  flex-shrink: 0;
+
   border-radius: 50%;
+
   background: var(--text-discreet);
 }
 
-.status-dot.nova { background: var(--brand); }
-.status-dot.interessante { background: var(--warning); }
-.status-dot.em-andamento { background: var(--success); }
-.status-dot.acompanhando { background: #4f46e5; }
-.status-dot.enviado-proposta { background: #db2777; }
-.status-dot.entrevista { background: #7c3aed; }
-
-.status-row strong {
-  color: var(--text-primary);
-}
-
-.technology-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.technology-row {
-  display: grid;
-  grid-template-columns: 90px 1fr 24px;
-  align-items: center;
-  gap: 12px;
-  font-size: 14px;
-}
-
-.technology-row > span {
-  color: var(--text-secondary);
-  font-weight: 600;
-}
-
-.technology-bar {
-  height: 7px;
-  overflow: hidden;
-  border-radius: var(--radius-full);
-  background: var(--border);
-}
-
-.technology-bar span {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
+.status-dot.nova {
   background: var(--brand);
 }
 
-.technology-row strong {
-  text-align: right;
-  color: var(--text-muted);
+.status-dot.interessante {
+  background: var(--warning);
 }
 
-.empty-small {
-  margin: 0;
-  color: var(--text-muted);
+.status-dot.em-andamento {
+  background: var(--success);
+}
+
+.status-dot.acompanhando {
+  background: #4f46e5;
+}
+
+.status-dot.enviado-proposta {
+  background: #db2777;
+}
+
+.status-dot.entrevista {
+  background: #7c3aed;
+}
+
+.status-progress {
+  width: 100%;
+  height: 6px;
+
+  overflow: hidden;
+
+  border-radius: var(--radius-full);
+
+  background: var(--border);
+}
+
+.status-progress span {
+  display: block;
+
+  height: 100%;
+
+  min-width: 4px;
+
+  border-radius: inherit;
+
+  background: var(--brand);
+
+  transition: width 300ms ease;
 }
 
 .recent {
   margin-bottom: 40px;
+}
+
+/* =========================================
+   PERFIL TÉCNICO
+   ========================================= */
+
+.technical-card {
+  min-height: 300px;
+}
+
+.technology-ranking {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.technology-ranking-item {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+
+  min-height: 48px;
+  padding: 7px 10px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+
+  background: var(--bg-page);
+
+  transition:
+    border-color var(--transition-fast),
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.technology-ranking-item:hover {
+  border-color: var(--brand-border);
+  background: var(--brand-light);
+  transform: translateY(-1px);
+}
+
+.technology-rank {
+  width: 26px;
+  height: 26px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: var(--radius-full);
+
+  background: var(--brand-light);
+  color: var(--brand);
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.technology-name {
+  min-width: 0;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: var(--text-secondary);
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.technology-count {
+  min-width: 24px;
+
+  color: var(--text-primary);
+
+  font-size: 14px;
+  font-weight: 700;
+
+  text-align: right;
 }
 
 .section-header {
@@ -261,21 +391,6 @@
   font-size: 14px;
 }
 
-.technology-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 12px;
-}
-
-.technology-tags span {
-  padding: 4px 8px;
-  border-radius: 6px;
-  background: var(--bg-surface-hover);
-  color: var(--text-muted);
-  font-size: 12px;
-}
-
 .status-badge {
   padding: 5px 10px;
   border-radius: var(--radius-full);
@@ -285,24 +400,74 @@
   flex-shrink: 0;
 }
 
-.status-badge.nova { background: var(--info-light); color: #1e40af; }
-.status-badge.interessante { background: var(--warning-light); color: #92400e; }
-.status-badge.em-andamento { background: var(--success-light); color: #166534; }
-.status-badge.acompanhando { background: #e0e7ff; color: #3730a3; }
-.status-badge.enviado-proposta { background: #fce7f3; color: #9d174d; }
-.status-badge.entrevista { background: #ede9fe; color: #5b21b6; }
+.status-badge.nova {
+  background: var(--info-light);
+  color: #1e40af;
+}
+
+.status-badge.interessante {
+  background: var(--warning-light);
+  color: #92400e;
+}
+
+.status-badge.em-andamento {
+  background: var(--success-light);
+  color: #166534;
+}
+
+.status-badge.acompanhando {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.status-badge.enviado-proposta {
+  background: #fce7f3;
+  color: #9d174d;
+}
+
+.status-badge.entrevista {
+  background: #ede9fe;
+  color: #5b21b6;
+}
 
 @media (max-width: 950px) {
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .dashboard-grid { grid-template-columns: 1fr; }
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 700px) {
-  .dashboard { padding: 20px; }
-  .dashboard-header { align-items: flex-start; flex-direction: column; }
-  .dashboard-header .btn { width: 100%; }
-  .stats-grid { grid-template-columns: 1fr; }
-  .section-header { align-items: flex-start; flex-direction: column; }
-  .opportunity-card { flex-direction: column; }
-  .technology-row { grid-template-columns: 80px 1fr 24px; }
+  .dashboard {
+    padding: 20px;
+  }
+
+  .dashboard-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .dashboard-header .btn {
+    width: 100%;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .opportunity-card {
+    flex-direction: column;
+  }
+
+  .technology-ranking {
+    grid-template-columns: 1fr;
+  }
 }

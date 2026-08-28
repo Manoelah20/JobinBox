@@ -9,6 +9,80 @@
   padding: 32px;
 }
 
+/* Search & Sort */
+.search-sort {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.search-group {
+  min-width: 160px;
+  flex: 1;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  width: 18px;
+  height: 18px;
+  color: var(--text-discreet);
+  pointer-events: none;
+}
+
+.search-input-wrapper input {
+  padding-left: 44px;
+  padding-right: 44px;
+  width: 100%;
+  border-radius: var(--radius-md);
+}
+
+.search-clear {
+  position: absolute;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition:
+    color var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.search-clear:hover {
+  color: var(--text-primary);
+  background: var(--bg-surface-hover);
+}
+
+.export-group {
+  display: flex;
+  gap: 8px;
+}
+
+.export-group .btn-ghost {
+  padding: 10px 14px;
+}
+
+.export-group .btn-ghost svg {
+  margin-right: 6px;
+}
+
 .opportunities-list {
   display: grid;
   gap: 16px;
@@ -116,5 +190,55 @@
     position: static;
     margin-top: 16px;
     justify-content: flex-end;
+  }
+
+  .toolbar {
+    align-items: stretch;
+  }
+
+  .toolbar-end {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .search-sort {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-group {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .filters {
+    width: 100%;
+  }
+
+  .filter-group {
+    flex: 1;
+  }
+
+  .filter-group select {
+    width: 100%;
+  }
+
+  .export-group {
+    justify-content: flex-start;
+  }
+
+  .export-group .btn-ghost span {
+    display: none;
+  }
+
+  .export-group .btn-ghost {
+    padding: 10px;
+  }
+
+  .hide-mobile {
+    display: none !important;
   }
 }

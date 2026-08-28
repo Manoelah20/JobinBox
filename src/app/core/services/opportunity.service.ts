@@ -1,11 +1,12 @@
 import { Injectable, signal, computed } from '@angular/core';
 
+export type OpportunityType = 'CLT' | 'PJ' | 'Estágio' | 'Trainee' | 'Curso' | 'Evento' | 'Outro';
 export interface Opportunity {
   id: string;
   title: string;
   company: string;
   technologies: string[];
-  type: string;
+  type: OpportunityType;
   status: string;
   workMode?: string;
   description?: string;
@@ -132,10 +133,18 @@ export class OpportunityService {
   private readonly _opportunities = signal<Opportunity[]>([]);
   private readonly _filterStatus = signal<string>('');
   private readonly _filterType = signal<string>('');
+  private readonly _searchTerm = signal<string>('');
+  private readonly _sortBy = signal<
+    'createdAt' | 'updatedAt' | 'title' | 'company' | 'relevanceScore'
+  >('createdAt');
+  private readonly _sortOrder = signal<'asc' | 'desc'>('desc');
 
   readonly opportunities = this._opportunities.asReadonly();
   readonly filterStatus = this._filterStatus.asReadonly();
   readonly filterType = this._filterType.asReadonly();
+  readonly searchTerm = this._searchTerm.asReadonly();
+  readonly sortBy = this._sortBy.asReadonly();
+  readonly sortOrder = this._sortOrder.asReadonly();
 
   readonly statuses = [
     'Nova',
@@ -146,26 +155,91 @@ export class OpportunityService {
     'Entrevista',
   ];
 
-  readonly types = ['CLT', 'PJ', 'Trainee', 'Estágio', 'Curso', 'Evento', 'Outro'];
+  readonly types: OpportunityType[] = [
+    'CLT',
+    'PJ',
+    'Estágio',
+    'Trainee',
+    'Curso',
+    'Evento',
+    'Outro',
+  ];
   readonly workModes = ['Remota', 'Híbrida', 'Presencial'];
 
   readonly filteredOpportunities = computed(() => {
     const status = this._filterStatus();
     const type = this._filterType();
-    return this._opportunities().filter((opportunity) => {
+    const search = this._searchTerm().toLowerCase().trim();
+    const sortBy = this._sortBy();
+    const sortOrder = this._sortOrder();
+
+    const filtered = this._opportunities().filter((opportunity) => {
       const statusMatch = !status || opportunity.status === status;
       const typeMatch = !type || opportunity.type === type;
-      return statusMatch && typeMatch;
+      const searchMatch =
+        !search ||
+        opportunity.title.toLowerCase().includes(search) ||
+        opportunity.company.toLowerCase().includes(search) ||
+        opportunity.technologies.some((t) => t.toLowerCase().includes(search)) ||
+        opportunity.description?.toLowerCase().includes(search) ||
+        opportunity.location?.toLowerCase().includes(search);
+      return statusMatch && typeMatch && searchMatch;
     });
+
+    filtered.sort((a, b) => {
+      let aValue: string | number = a[sortBy] ?? '';
+      let bValue: string | number = b[sortBy] ?? '';
+
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
+      }
+
+      const comparison = aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+      return sortOrder === 'asc' ? comparison : -comparison;
+    });
+
+    return filtered;
   });
 
   readonly totalCount = computed(() => this._opportunities().length);
-  readonly newCount = computed(() =>
-    this._opportunities().filter((o) => o.status === 'Nova').length
+  readonly newCount = computed(
+    () => this._opportunities().filter((o) => o.status === 'Nova').length,
   );
-  readonly inProgressCount = computed(() =>
-    this._opportunities().filter((o) => o.status === 'Em andamento').length
+  readonly inProgressCount = computed(
+    () => this._opportunities().filter((o) => o.status === 'Em andamento').length,
   );
+
+  private normalizeType(type: unknown): OpportunityType {
+    const value = String(type ?? '').trim();
+
+    switch (value.toLowerCase()) {
+      case 'clt':
+        return 'CLT';
+
+      case 'pj':
+        return 'PJ';
+
+      case 'estágio':
+      case 'estagio':
+        return 'Estágio';
+
+      case 'trainee':
+        return 'Trainee';
+
+      case 'curso':
+        return 'Curso';
+
+      case 'evento':
+        return 'Evento';
+
+      case 'outro':
+        return 'Outro';
+
+      default:
+        return 'Outro';
+    }
+  }
 
   constructor() {
     this.loadFromStorage();
@@ -204,6 +278,23 @@ export class OpportunityService {
     this._filterType.set('');
   }
 
+  setSearchTerm(term: string): void {
+    this._searchTerm.set(term);
+  }
+
+  setSortBy(field: 'createdAt' | 'updatedAt' | 'title' | 'company' | 'relevanceScore'): void {
+    if (this._sortBy() === field) {
+      this._sortOrder.update((order) => (order === 'asc' ? 'desc' : 'asc'));
+    } else {
+      this._sortBy.set(field);
+      this._sortOrder.set('desc');
+    }
+  }
+
+  clearSearch(): void {
+    this._searchTerm.set('');
+  }
+
   add(opportunity: Omit<Opportunity, 'id' | 'createdAt' | 'updatedAt'>): Opportunity {
     const now = new Date().toISOString();
     const newOpportunity: Opportunity = {
@@ -226,7 +317,7 @@ export class OpportunityService {
           return updated;
         }
         return o;
-      })
+      }),
     );
     if (updated) {
       this.saveToStorage();
@@ -256,20 +347,21 @@ export class OpportunityService {
         }
 
         const existing = this._opportunities().find(
-          (o) => o.title === item.title && o.company === item.company
+          (o) => o.title === item.title && o.company === item.company,
         );
 
         const opportunityData: Omit<Opportunity, 'id' | 'createdAt' | 'updatedAt'> = {
           title: item.title,
           company: item.company,
           technologies: Array.isArray(item.technologies) ? item.technologies : [],
-          type: item.type || 'CLT',
+          type: this.normalizeType(item.type),
           status: item.status || 'Nova',
           workMode: item.workMode,
           description: item.description,
           link: item.link,
           salary: item.salary,
           location: item.location,
+          relevanceScore: item.relevanceScore,
         };
 
         if (existing) {
@@ -325,6 +417,7 @@ export class OpportunityService {
       'link',
       'salary',
       'location',
+      'relevanceScore',
       'createdAt',
       'updatedAt',
     ];
@@ -334,7 +427,7 @@ export class OpportunityService {
         const value = (o as unknown as Record<string, unknown>)[h];
         if (Array.isArray(value)) return `"${value.join('; ')}"`;
         return `"${String(value ?? '').replace(/"/g, '""')}"`;
-      })
+      }),
     );
 
     return [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');

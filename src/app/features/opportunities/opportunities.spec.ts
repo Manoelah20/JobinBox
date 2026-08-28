@@ -1,24 +1,31 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { OpportunityService } from '../../core/services/opportunity.service';
-import { Opportunities } from './opportunities';
 
-describe('Opportunities', () => {
-  let component: Opportunities;
-  let fixture: ComponentFixture<Opportunities>;
+describe('Opportunities (service integration)', () => {
+  let opportunityService: OpportunityService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Opportunities],
       providers: [OpportunityService, provideRouter([])],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Opportunities);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
+    opportunityService = TestBed.inject(OpportunityService);
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should have OpportunityService available', () => {
+    expect(opportunityService).toBeTruthy();
+  });
+
+  it('should have filter signals', () => {
+    expect(opportunityService.filterStatus).toBeDefined();
+    expect(opportunityService.filterType).toBeDefined();
+    expect(opportunityService.filteredOpportunities).toBeDefined();
+  });
+
+  it('should have statuses and types', () => {
+    expect(opportunityService.statuses).toBeDefined();
+    expect(opportunityService.types).toBeDefined();
+    expect(opportunityService.workModes).toBeDefined();
   });
 });

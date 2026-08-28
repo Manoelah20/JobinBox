@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+import type { Routes } from '@angular/router';
 import { Dashboard } from './features/dashboard/dashboard';
 import { Opportunities } from './features/opportunities/opportunities';
 import { Import } from './features/import/import';

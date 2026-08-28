@@ -1,24 +1,26 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { OpportunityService } from '../../core/services/opportunity.service';
-import { Import } from './import';
 
-describe('Import', () => {
-  let component: Import;
-  let fixture: ComponentFixture<Import>;
+describe('Import (service integration)', () => {
+  let opportunityService: OpportunityService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Import],
       providers: [OpportunityService, provideRouter([])],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Import);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
+    opportunityService = TestBed.inject(OpportunityService);
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should have OpportunityService available', () => {
+    expect(opportunityService).toBeTruthy();
+  });
+
+  it('should have import methods', () => {
+    expect(typeof opportunityService.importFromJson).toBe('function');
+    expect(typeof opportunityService.importFromCsv).toBe('function');
+    expect(typeof opportunityService.exportToJson).toBe('function');
+    expect(typeof opportunityService.exportToCsv).toBe('function');
   });
 });

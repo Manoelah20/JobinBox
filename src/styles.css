@@ -4,9 +4,5 @@
 /* Shared utility */
 
 .mono {
-    font-family:
-        "Geist Mono",
-        "SFMono-Regular",
-        Consolas,
-        monospace;
+  font-family: 'Geist Mono', 'SFMono-Regular', Consolas, monospace;
 }

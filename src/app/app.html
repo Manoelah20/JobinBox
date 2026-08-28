@@ -1,19 +1,15 @@
 <div class="app-shell">
+  <a href="#main-content" class="skip-link">Pular para o conteúdo principal</a>
+  <app-toast-container />
   <header class="app-header">
     <div class="header-inner">
-
       <a routerLink="/" class="brand" aria-label="JobInbox - Dashboard">
-        <span class="brand-mark">
-          J
-        </span>
+        <span class="brand-mark"> J </span>
 
-        <span class="brand-name">
-          Job<span>Inbox</span>
-        </span>
+        <span class="brand-name"> Job<span>Inbox</span> </span>
       </a>
 
       <nav class="main-nav" aria-label="Navegação principal">
-
         <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
           <span class="nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24">
@@ -62,18 +58,16 @@
 
           <span>Importar</span>
         </a>
-
       </nav>
 
       <div class="header-status">
         <span class="status-dot"></span>
         <span>Local</span>
       </div>
-
     </div>
   </header>
 
-  <main class="app-main">
+  <main id="main-content" class="app-main">
     <router-outlet />
   </main>
 </div>

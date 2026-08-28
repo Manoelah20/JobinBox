@@ -19,37 +19,30 @@ export class Dashboard {
   @ViewChild(OpportunityModal)
   protected readonly modal!: OpportunityModal;
 
-  protected readonly totalOpportunities =
-    this.opportunityService.totalCount;
+  protected readonly totalOpportunities = this.opportunityService.totalCount;
 
-  protected readonly newOpportunities =
-    this.opportunityService.newCount;
+  protected readonly newOpportunities = this.opportunityService.newCount;
 
-  protected readonly inProgressOpportunities =
-    this.opportunityService.inProgressCount;
+  protected readonly inProgressOpportunities = this.opportunityService.inProgressCount;
 
-  protected readonly pendingMessages =
-    this.inboxService.pendingCount;
+  protected readonly pendingMessages = this.inboxService.pendingCount;
 
-  protected readonly highRelevanceOpportunities = computed(() =>
-    this.opportunities().filter(
-      (opportunity) =>
-        opportunity.relevanceScore !== undefined &&
-        opportunity.relevanceScore >= 70
-    ).length
+  protected readonly highRelevanceOpportunities = computed(
+    () =>
+      this.opportunities().filter(
+        (opportunity) =>
+          opportunity.relevanceScore !== undefined && opportunity.relevanceScore >= 70,
+      ).length,
   );
 
-  protected readonly opportunities =
-    this.opportunityService.opportunities;
+  protected readonly opportunities = this.opportunityService.opportunities;
 
   protected readonly statusSummary = computed(() => {
     const opportunities = this.opportunities();
 
     return this.opportunityService.statuses.map((status) => ({
       status,
-      count: opportunities.filter(
-        (opportunity) => opportunity.status === status
-      ).length,
+      count: opportunities.filter((opportunity) => opportunity.status === status).length,
     }));
   });
 
@@ -59,10 +52,7 @@ export class Dashboard {
 
     for (const opportunity of opportunities) {
       for (const technology of opportunity.technologies) {
-        technologyMap.set(
-          technology,
-          (technologyMap.get(technology) ?? 0) + 1
-        );
+        technologyMap.set(technology, (technologyMap.get(technology) ?? 0) + 1);
       }
     }
 
@@ -77,12 +67,8 @@ export class Dashboard {
 
   protected readonly recentOpportunities = computed(() =>
     [...this.opportunities()]
-      .sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() -
-          new Date(a.createdAt).getTime()
-      )
-      .slice(0, 5)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 5),
   );
 
   protected openCreateModal(): void {
@@ -102,8 +88,6 @@ export class Dashboard {
   }
 
   protected getStatusClass(status: string): string {
-    return status
-      .toLowerCase()
-      .replace(/\s+/g, '-');
+    return status.toLowerCase().replace(/\s+/g, '-');
   }
 }
