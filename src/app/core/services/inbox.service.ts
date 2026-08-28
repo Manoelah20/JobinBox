@@ -310,7 +310,7 @@ export class InboxService {
       return 'Híbrida';
     }
 
-    if (/presencial|on-site|onsite|office/i.test(content)) {
+    if (/presencial|on-site|onsite/i.test(content)) {
       return 'Presencial';
     }
 
@@ -381,9 +381,9 @@ export class InboxService {
   private extractCompany(sender: string, content?: string): string {
     if (content) {
       const patterns = [
-        /empresa\s*:?\s*([^\n,|]+)/i,
-        /company\s*:?\s*([^\n,|]+)/i,
-        /(?:na|no|da|do)\s+empresa\s+([^\n,|]+)/i,
+        /empresa\s*:?\s*([^\n,.|]+)/i,
+        /company\s*:?\s*([^\n,.|]+)/i,
+        /(?:na|no|da|do)\s+empresa\s+([^\n,.|]+)/i,
       ];
 
       for (const pattern of patterns) {
