@@ -1,87 +1,76 @@
 # JobInbox
 
-Este projeto foi gerado usando o [Angular CLI](https://github.com/angular/angular-cli) versão 21.2.7.
+Gerenciador de oportunidades de emprego, cursos e vagas — construído com Angular 21, Signals e zoneless change detection.
 
-## Servidor de desenvolvimento
+## Stack
 
-Para iniciar um servidor de desenvolvimento local, execute:
+- **Framework**: Angular 21 (standalone components, Signals, zoneless)
+- **Testing**: Vitest + @analogjs/vite-plugin-angular (129 testes)
+- **Styling**: Design system CSS custom properties (sem dependências externas)
+- **State**: Signals + Services reativos
+- **PWA**: Service Worker + manifest (offline-first)
+- **CI/CD**: GitHub Actions (lint, typecheck, testes, build)
 
-```bash
-ng serve
-```
+## Funcionalidades
 
-Uma vez que o servidor estiver rodando, abra o navegador e acesse `http://localhost:4200/`. A aplicação recarregará automaticamente sempre que você modificar qualquer um dos arquivos de origem.
+- **Oportunidades**: CRUD completo com filtros (status, tipo, busca, ordenação), export JSON/CSV
+- **Inbox**: Análise de e-mails, extração automática de dados da vaga, criação de oportunidade
+- **Dashboard**: Métricas e estatísticas em tempo real
+- **Import**: Importação em lote via JSON/CSV
+- **Status badges padronizados**: Nova, Interessante, Em andamento, Acompanhando, Enviado proposta, Entrevista — mesmo formato/tamanho, cores semânticas
 
-## Geração de código (Code scaffolding)
-
-O Angular CLI inclui ferramentas poderosas de geração de código. Para gerar um novo componente, execute:
-
-```bash
-ng generate component nome-do-componente
-```
-
-Para uma lista completa de schematics disponíveis (como `components`, `directives`, ou `pipes`), execute:
-
-```bash
-ng generate --help
-```
-
-## Build (Compilação)
-
-Para compilar o projeto, execute:
+## Comandos
 
 ```bash
-ng build
+# Desenvolvimento
+npm start
+
+# Build produção
+npm run build
+
+# Testes
+npm run test:run        # unitários (Vitest)
+npm run test:coverage   # com cobertura
+
+# Qualidade
+npm run lint            # ESLint
+npm run typecheck       # TypeScript
+npm run format          # Prettier
+npm run ci              # pipeline completo
 ```
 
-Isso compilará seu projeto e armazenará os artefatos de build no diretório `dist/`. Por padrão, o build de produção otimiza sua aplicação para performance e velocidade.
+## Estrutura
 
-## Executando testes unitários
+```
+src/app/
+├── core/
+│   └── services/       # OpportunityService, InboxService, RelevanceService, ToastService
+├── features/
+│   ├── opportunities/  # Lista + CRUD de oportunidades
+│   ├── inbox/          # Análise de mensagens
+│   ├── dashboard/      # Métricas
+│   ├── import/         # Import JSON/CSV
+│   └── opportunity-detail/
+├── shared/
+│   ├── components/     # OpportunityModal, UI compartilhados
+│   └── styles/         # design-system.css (tokens + componentes)
+└── app.routes.ts       # Rotas lazy-loaded
+```
 
-Para executar testes unitários com o [Vitest](https://vitest.dev/), use o seguinte comando:
+## Deploy
+
+- **Vercel**: Deploy automático no push para `master`
+- **Build**: `ng build` → output `dist/jobinbox/browser`
+- **PWA**: Service Worker ativa em produção
+
+## Testes
 
 ```bash
-ng test
+# 129 testes passando
+# Cobertura: services, components, guards, pipes
+npm run test:run
 ```
 
-Para executar testes com cobertura:
+## Licença
 
-```bash
-npm run test:coverage
-```
-
-## Executando testes end-to-end
-
-Para testes end-to-end (e2e), execute:
-
-```bash
-ng e2e
-```
-
-O Angular CLI não vem com um framework de testes e2e por padrão. Você pode escolher um que atenda às suas necessidades (ex: Playwright, Cypress).
-
-## Scripts úteis adicionais
-
-```bash
-# Verificar formatação (Prettier)
-npm run format:check
-
-# Formatar código automaticamente
-npm run format
-
-# Verificar lint (ESLint)
-npm run lint
-
-# Corrigir problemas de lint automaticamente
-npm run lint:fix
-
-# Verificar tipos TypeScript
-npm run typecheck
-
-# Pipeline CI completo (format + lint + typecheck + test + build)
-npm run ci
-```
-
-## Recursos adicionais
-
-Para mais informações sobre o uso do Angular CLI, incluindo referências detalhadas de comandos, visite a página [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli).
+MIT
