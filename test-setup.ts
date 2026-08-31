@@ -2,9 +2,17 @@ import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { BrowserTestingModule, platformBrowserTesting } from '@angular/platform-browser/testing';
+import { ErrorHandler } from '@angular/core';
+import { provideZonelessChangeDetection } from '@angular/core';
 
-// Initialize Angular testing environment
-TestBed.initTestEnvironment(BrowserTestingModule, platformBrowserTesting());
+// Initialize Angular testing environment with compiler support
+TestBed.initTestEnvironment([BrowserTestingModule], platformBrowserTesting(), {
+  teardown: { destroyAfterEach: false },
+  providers: [
+    provideZonelessChangeDetection(),
+    { provide: ErrorHandler, useValue: { handleError: vi.fn() } },
+  ],
+});
 
 // Mock localStorage
 const localStorageMock = (() => {

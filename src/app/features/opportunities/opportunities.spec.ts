@@ -1,9 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter, Router } from '@angular/router';
+import { vi } from 'vitest';
+
 import { OpportunityService } from '../../core/services/opportunity.service';
 import { Opportunities } from './opportunities';
 import { OpportunityModal } from '../../shared/components/opportunity-modal/opportunity-modal';
 import { ToastService } from '../../core/services/toast.service';
+import { Opportunity } from '../../core/services/opportunity.service';
 
 describe('Opportunities', () => {
   let component: Opportunities;
@@ -114,8 +117,11 @@ describe('Opportunities', () => {
 
   it('should change sort option', () => {
     const spy = vi.spyOn(opportunityService, 'setSortBy');
+
     const event = {
-      target: { value: 'title' },
+      target: {
+        value: 'title',
+      },
     } as unknown as Event;
 
     component['onSortChange'](event);
@@ -125,8 +131,11 @@ describe('Opportunities', () => {
 
   it('should ignore empty sort value', () => {
     const spy = vi.spyOn(opportunityService, 'setSortBy');
+
     const event = {
-      target: { value: '' },
+      target: {
+        value: '',
+      },
     } as unknown as Event;
 
     component['onSortChange'](event);
@@ -146,12 +155,7 @@ describe('Opportunities', () => {
     vi.spyOn(opportunityService, 'exportToJson').mockReturnValue('{"title":"Teste"}');
 
     const downloadSpy = vi
-      .spyOn(
-        component as unknown as {
-          downloadFile: (a: string, b: string, c: string) => void;
-        },
-        'downloadFile',
-      )
+      .spyOn(component as unknown as { downloadFile: () => void }, 'downloadFile')
       .mockImplementation(() => undefined);
 
     const toastSpy = vi.spyOn(toastService, 'success');
@@ -163,6 +167,7 @@ describe('Opportunities', () => {
       'oportunidades.json',
       'application/json',
     );
+
     expect(toastSpy).toHaveBeenCalledWith('JSON exportado com sucesso');
   });
 
@@ -170,12 +175,7 @@ describe('Opportunities', () => {
     vi.spyOn(opportunityService, 'exportToCsv').mockReturnValue('title,company\nTeste,Empresa');
 
     const downloadSpy = vi
-      .spyOn(
-        component as unknown as {
-          downloadFile: (a: string, b: string, c: string) => void;
-        },
-        'downloadFile',
-      )
+      .spyOn(component as unknown as { downloadFile: () => void }, 'downloadFile')
       .mockImplementation(() => undefined);
 
     const toastSpy = vi.spyOn(toastService, 'success');
@@ -187,11 +187,13 @@ describe('Opportunities', () => {
       'oportunidades.csv',
       'text/csv',
     );
+
     expect(toastSpy).toHaveBeenCalledWith('CSV exportado com sucesso');
   });
 
   it('should open create modal', () => {
     const modal = component['modal'] as OpportunityModal;
+
     const spy = vi.spyOn(modal, 'openCreate');
 
     component['openCreateModal']();
@@ -200,7 +202,7 @@ describe('Opportunities', () => {
   });
 
   it('should open edit modal and stop event propagation', () => {
-    const opportunity = {
+    const opportunity: Opportunity = {
       id: '1',
       title: 'Frontend Developer',
       company: 'Empresa',
@@ -218,17 +220,21 @@ describe('Opportunities', () => {
     };
 
     const modal = component['modal'] as OpportunityModal;
+
     const modalSpy = vi.spyOn(modal, 'openEdit');
+
     const stopPropagation = vi.fn();
 
-    component['openEditModal'](opportunity as never, { stopPropagation } as unknown as Event);
+    component['openEditModal'](opportunity, { stopPropagation } as unknown as Event);
 
     expect(stopPropagation).toHaveBeenCalled();
+
     expect(modalSpy).toHaveBeenCalledWith(opportunity);
   });
 
   it('should delete opportunity after confirmation', () => {
     const deleteSpy = vi.spyOn(opportunityService, 'delete');
+
     const toastSpy = vi.spyOn(toastService, 'success');
 
     vi.stubGlobal(
@@ -241,7 +247,9 @@ describe('Opportunities', () => {
     component['deleteOpportunity']('123', { stopPropagation } as unknown as Event);
 
     expect(stopPropagation).toHaveBeenCalled();
+
     expect(deleteSpy).toHaveBeenCalledWith('123');
+
     expect(toastSpy).toHaveBeenCalledWith('Oportunidade excluída');
 
     vi.unstubAllGlobals();
@@ -249,6 +257,7 @@ describe('Opportunities', () => {
 
   it('should not delete opportunity when confirmation is cancelled', () => {
     const deleteSpy = vi.spyOn(opportunityService, 'delete');
+
     const toastSpy = vi.spyOn(toastService, 'success');
 
     vi.stubGlobal(
@@ -256,9 +265,12 @@ describe('Opportunities', () => {
       vi.fn(() => false),
     );
 
-    component['deleteOpportunity']('123', { stopPropagation: vi.fn() } as unknown as Event);
+    component['deleteOpportunity']('123', {
+      stopPropagation: vi.fn(),
+    } as unknown as Event);
 
     expect(deleteSpy).not.toHaveBeenCalled();
+
     expect(toastSpy).not.toHaveBeenCalled();
 
     vi.unstubAllGlobals();
@@ -274,10 +286,15 @@ describe('Opportunities', () => {
 
   it('should return the correct status class', () => {
     expect(component['getStatusClass']('Nova')).toBe('nova');
+
     expect(component['getStatusClass']('Interessante')).toBe('interessante');
+
     expect(component['getStatusClass']('Em andamento')).toBe('em-andamento');
+
     expect(component['getStatusClass']('Acompanhando')).toBe('acompanhando');
+
     expect(component['getStatusClass']('Enviado proposta')).toBe('enviado-proposta');
+
     expect(component['getStatusClass']('Entrevista')).toBe('entrevista');
   });
 
